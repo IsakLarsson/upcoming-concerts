@@ -1,49 +1,39 @@
+const app = require('express')()
+const dotenv = require('dotenv')
 const { chromium } = require('playwright')
+const { getEventInfoFromCard } = require('./eventInfoParser.js')
+dotenv.config()
+const PORT = process.env.PORT
 
-const getEventInfoFromCard = async (card) => {
-    const title = await card.$eval('.result-info__eventname', (el) =>
-        el.textContent.trim()
-    )
+const { eventList } = require('./assets/events.js')
 
-    const weekday = await card.$eval(
-        '.event-date__date__weekday',
-        (el) => el.textContent
-    )
-    const date = await card.$eval(
-        '.event-date__date__day',
-        (el) => el.textContent
-    )
-    const month = await card.$eval(
-        '.event-date__date__month',
-        (el) => el.textContent
-    )
-    const year = await card.$eval(
-        '.event-date__date__year',
-        (el) => el.textContent
-    )
-    return { title, weekday, date, month, year }
-}
+const routes = require('./routes/eventRoutes.js')
 
-async function main() {
-    const browser = await chromium.launch({
-        headless: true, // setting this to true will not run the UI
-    })
+app.use(routes)
 
-    const page = await browser.newPage()
-    await page.goto(
-        'https://www.livenation.se/event/allevents?location=Stockholm&page=1&genres='
-    )
-    // await page.waitForNavigation()
-    const eventList = []
-    const cards = await page.$$('section.result-card__wrapper')
-    eventList.push(
-        cards.forEach((card) => {
-            const eventInfo = getEventInfoFromCard(card)
-            console.log('eventInfo  :', eventInfo)
-        })
-    )
-    await page.waitForTimeout(5000) // wait for5 seconds
-    await browser.close()
-}
+app.listen(PORT, () => {
+    console.log(`app is listening on port ${PORT}`)
+})
 
-main()
+// async function main() {
+//     const browser = await chromium.launch({
+//         headless: true, // setting this to true will not run the UI
+//     })
+//
+//     const page = await browser.newPage()
+//     await page.goto(
+//         'https://www.livenation.se/event/allevents?location=Stockholm&page=1&genres='
+//     )
+//     // await page.waitForNavigation()
+//     const cards = await page.$$('section.result-card__wrapper')
+//     cards.forEach(async (card) => {
+//         console.log('Adding event')
+//         const eventInfo = await getEventInfoFromCard(card)
+//         eventList.push(eventInfo)
+//     })
+//     console.log('added event info')
+//     await page.waitForTimeout(5000) // wait for5 seconds
+//     await browser.close()
+// }
+//
+// main()
