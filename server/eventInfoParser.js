@@ -1,4 +1,4 @@
-const getEventInfoFromCard = async (card) => {
+export const getEventInfoFromCard = async (card) => {
     const title = await card.$eval('.result-info__eventname', (el) =>
         el.textContent.trim()
     )
@@ -21,5 +21,3 @@ const getEventInfoFromCard = async (card) => {
     )
     return { title, weekday, date, month, year }
 }
-
-module.exports = { getEventInfoFromCard }

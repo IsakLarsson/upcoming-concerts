@@ -1,14 +1,11 @@
-const app = require('express')()
-const dotenv = require('dotenv')
-const { chromium } = require('playwright')
-const { getEventInfoFromCard } = require('./eventInfoParser.js')
+import express from 'express'
+import dotenv from 'dotenv'
 dotenv.config()
 const PORT = process.env.PORT
 
-const { eventList } = require('./assets/events.js')
-
-const routes = require('./routes/eventRoutes.js')
-
+import routes from './routes/eventRoutes.js'
+const app = express()
+app.use(express.json())
 app.use(routes)
 
 app.listen(PORT, () => {

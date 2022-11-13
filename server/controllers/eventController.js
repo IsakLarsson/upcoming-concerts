@@ -1,20 +1,25 @@
-const eventList = require('../assets/events.js')
+import { eventList } from '../assets/events.js'
+import playwright from 'playwright'
+import { getEventInfoFromCard } from '../eventInfoParser.js'
+import url from 'url'
+const chromium = playwright.chromium
 
-const { chromium } = require('playwright')
-const { getEventInfoFromCard } = require('../eventInfoParser.js')
+const browser = await chromium.launch({
+    headless: true, // setting this to true will not run the UI
+})
 
-const getEvents = async (req, res) => {
+export const getEvents = async (req, res) => {
+    let { city } = req.body
+    if (!city) {
+        city = 'Gävle'
+    }
     try {
         console.log('Starting crawl')
-        const browser = await chromium.launch({
-            headless: true, // setting this to true will not run the UI
-        })
 
         const page = await browser.newPage()
         await page.goto(
-            'https://www.livenation.se/event/allevents?location=Stockholm&page=1&genres='
+            `https://www.livenation.se/event/allevents?location=${city}&page=1&genres=`
         )
-        // await page.waitForNavigation()
         const cards = await page.$$('section.result-card__wrapper')
         cards.forEach(async (card) => {
             console.log('Adding event')
@@ -24,6 +29,9 @@ const getEvents = async (req, res) => {
         console.log('added event info')
         await page.waitForTimeout(5000) // wait for5 seconds
         await browser.close()
+        if (eventList.length === 0) {
+            res.status(400).json({ message: 'No events could be found' })
+        }
         res.json(eventList)
     } catch (error) {
         res.status(500).json({
@@ -32,5 +40,3 @@ const getEvents = async (req, res) => {
         })
     }
 }
-
-module.exports = { getEvents }
