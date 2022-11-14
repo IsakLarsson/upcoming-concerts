@@ -9,22 +9,34 @@ const eventInfoFields = {
     venue: '.result-info__venue',
 }
 
+const defaultInfoFields = [
+    'year',
+    'month',
+    'day',
+    'weekday',
+    'eventname',
+    'city',
+    'headliners',
+    'venue',
+]
 const getElementTextContent = async (card, eventInfoField) => {
     const content = await card.$eval(eventInfoField, (el) =>
         el.textContent.trim()
     )
     return content
 }
+
 export const getEventInfoFromCard = async (
     card,
-    fieldsToGet = eventInfoFields
+    fieldsToGet = defaultInfoFields
 ) => {
     let eventInfo = {}
-    for (const key in fieldsToGet) {
-        if (fieldsToGet.hasOwnProperty(key)) {
-            const content = await getElementTextContent(card, fieldsToGet[key])
-            eventInfo[key] = content
-        }
+    for (const infoField of fieldsToGet) {
+        const content = await getElementTextContent(
+            card,
+            eventInfoFields[infoField]
+        )
+        eventInfo[infoField] = content
     }
     return eventInfo
 }
