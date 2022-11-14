@@ -37,5 +37,5 @@ export const getEvents = asyncHandler(async (req, res) => {
     const eventCards = await page.$$('section.result-card__wrapper')
     eventList = await loadEvents(eventCards)
     res.json(eventList)
-    console.log('found events: ', eventList)
+    // console.log('found events: ', eventList)
 })
