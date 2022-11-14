@@ -19,5 +19,6 @@ export const getEventInfoFromCard = async (card) => {
         '.event-date__date__year',
         (el) => el.textContent
     )
-    return { title, weekday, date, month, year }
+    const city = await card.$eval('.result-info__city', (el) => el.textContent)
+    return { title, weekday, date, month, year, city }
 }
