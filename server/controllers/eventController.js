@@ -24,7 +24,6 @@ export const getEvents = asyncHandler(async (req, res) => {
     genres = genres === undefined ? '' : genres
 
     const genreString = buildGenreString(genres)
-
     const page = await browser.newPage()
     await page.goto(
         `https://www.livenation.se/event/allevents?${location}&page=1&genres=${genreString}`
@@ -36,6 +35,6 @@ export const getEvents = asyncHandler(async (req, res) => {
     }
     const eventCards = await page.$$('li.allevents__eventlistitem')
     eventList = await loadEvents(eventCards)
+    browser.close()
     res.json(eventList)
-    // console.log('found events: ', eventList)
 })

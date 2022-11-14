@@ -32,7 +32,6 @@ export const getEventInfoFromCard = async (
 ) => {
     let eventInfo = {}
     const href = await card.$eval('a', (el) => el.href)
-    eventInfo['href'] = href
     for (const infoField of fieldsToGet) {
         const content = await getElementTextContent(
             card,
