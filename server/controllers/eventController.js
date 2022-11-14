@@ -34,7 +34,7 @@ export const getEvents = asyncHandler(async (req, res) => {
         res.status(404)
         throw new Error('No events could be found, try a different search')
     }
-    const eventCards = await page.$$('section.result-card__wrapper')
+    const eventCards = await page.$$('li.allevents__eventlistitem')
     eventList = await loadEvents(eventCards)
     res.json(eventList)
     // console.log('found events: ', eventList)
