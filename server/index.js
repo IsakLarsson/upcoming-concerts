@@ -14,6 +14,10 @@ app.use(function (req, res, next) {
     )
     next()
 })
+app.use((req, res, next) => {
+    console.log('Request type: ', req.method)
+    next()
+})
 app.use(express.json())
 app.use(routes)
 app.use(errorHandling) // Define error handling MW last always

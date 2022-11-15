@@ -4,10 +4,6 @@ import { getEventInfoFromCard } from '../eventInfoParser.js'
 import asyncHandler from 'express-async-handler'
 const chromium = playwright.chromium
 
-const browser = await chromium.launch({
-    headless: true, // setting this to true will not run the UI
-})
-
 const loadEvents = async (eventCards) => {
     let loadedEvents = []
     for await (const card of eventCards) {
@@ -18,10 +14,16 @@ const loadEvents = async (eventCards) => {
 }
 
 export const getEvents = asyncHandler(async (req, res) => {
-    let eventList = []
+    //TODO: you shouldnt send data in the body, do it as parameters in the url instead
     let { city, genres } = req.body
-    const location = city === undefined ? '' : `location=${city}`
+
+    let eventList = []
     genres = genres === undefined ? '' : genres
+    const location = city === undefined ? '' : `location=${city}`
+
+    const browser = await chromium.launch({
+        headless: true, // setting this to true will not run the UI
+    })
 
     const genreString = buildGenreString(genres)
     const page = await browser.newPage()
