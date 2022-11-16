@@ -4,7 +4,7 @@ import { getEventInfoFromCard } from '../eventInfoParser.js'
 import asyncHandler from 'express-async-handler'
 const chromium = playwright.chromium
 
-const loadEvents = async (eventCards) => {
+const parseEventInfo = async (eventCards) => {
     let loadedEvents = []
     for await (const card of eventCards) {
         const eventInfo = await getEventInfoFromCard(card)
@@ -13,30 +13,35 @@ const loadEvents = async (eventCards) => {
     return loadedEvents
 }
 
-export const getEvents = asyncHandler(async (req, res) => {
-    //TODO: you shouldnt send data in the body, do it as parameters in the url instead
-    let { city, genres } = req.body
+const buildSearchURL = (location, genreString) => {
+    return `https://www.livenation.se/event/allevents?${location}&page=1&genres=${genreString}`
+}
 
-    let eventList = []
-    genres = genres === undefined ? '' : genres
+const searchForEvents = async (page, location, genreString) => {
+    await page.goto(buildSearchURL(location, genreString))
+    const noResults = await page.$('p.allevents__noresults')
+    if (noResults)
+        throw new Error('No events could be found, try a different search')
+    const eventCards = await page.$$('li.allevents__eventlistitem')
+    return eventCards
+}
+
+export const getEvents = asyncHandler(async (req, res) => {
+    const params = req.query
+    console.log(params)
+    let { city, genres } = req.query
     const location = city === undefined ? '' : `location=${city}`
+    genres = genres === undefined ? '' : genres
+    if (typeof genres == 'string') genres = [genres] //ugly fix for single genre
 
     const browser = await chromium.launch({
         headless: true, // setting this to true will not run the UI
     })
+    const page = await browser.newPage()
 
     const genreString = buildGenreString(genres)
-    const page = await browser.newPage()
-    await page.goto(
-        `https://www.livenation.se/event/allevents?${location}&page=1&genres=${genreString}`
-    )
-    const noResults = await page.$('p.allevents__noresults')
-    if (noResults) {
-        res.status(404)
-        throw new Error('No events could be found, try a different search')
-    }
-    const eventCards = await page.$$('li.allevents__eventlistitem')
-    eventList = await loadEvents(eventCards)
+    const eventCards = await searchForEvents(page, location, genreString)
+    const eventList = await parseEventInfo(eventCards)
     browser.close()
     res.json(eventList)
 })
