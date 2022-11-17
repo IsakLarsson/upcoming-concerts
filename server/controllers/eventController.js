@@ -17,31 +17,41 @@ const buildSearchURL = (location, genreString) => {
     return `https://www.livenation.se/event/allevents?${location}&page=1&genres=${genreString}`
 }
 
-const searchForEvents = async (page, location, genreString) => {
+const searchForEvents = async (res, page, location, genreString) => {
     await page.goto(buildSearchURL(location, genreString))
     const noResults = await page.$('p.allevents__noresults')
-    if (noResults)
+    if (noResults) {
+        res.status(404)
         throw new Error('No events could be found, try a different search')
+    }
     const eventCards = await page.$$('li.allevents__eventlistitem')
     return eventCards
 }
 
 export const getEvents = asyncHandler(async (req, res) => {
-    const params = req.query
-    console.log(params)
-    let { city, genres } = req.query
-    const location = city === undefined ? '' : `location=${city}`
-    genres = genres === undefined ? '' : genres
-    if (typeof genres == 'string') genres = [genres] //ugly fix for single genre
-
     const browser = await chromium.launch({
         headless: true, // setting this to true will not run the UI
     })
-    const page = await browser.newPage()
+    try {
+        const params = req.query
+        let { city, genres } = req.query
+        const location = city === undefined ? '' : `location=${city}`
+        genres = genres === undefined ? '' : genres
+        if (typeof genres == 'string') genres = [genres] //ugly fix for single genre
+        const page = await browser.newPage()
 
-    const genreString = buildGenreString(genres)
-    const eventCards = await searchForEvents(page, location, genreString)
-    const eventList = await parseEventInfo(eventCards)
-    browser.close()
-    res.json(eventList)
+        const genreString = buildGenreString(genres)
+        const eventCards = await searchForEvents(
+            res,
+            page,
+            location,
+            genreString
+        )
+        const eventList = await parseEventInfo(eventCards)
+        browser.close()
+        res.json(eventList)
+    } catch (error) {
+        browser.close() //Forgot to close browser on error before and damn near set my laptop on fire
+        throw error
+    }
 })
