@@ -13,9 +13,20 @@ describe('GET api/events', () => {
         const response = await request(app).get('/api/events?city=e')
         expect(response.statusCode).toBe(404)
     })
-    //I dont understand how this works
+    // This is bullshit, returns different data than in a real run
     // it('Should respond with all fields', async () => {
     //     const response = await request(app).get('/api/events')
-    //     expect(response.body).toContain('year')
+    //     expect(response.statusCode).toBe(200)
+    //     expect(response.body).toEqual({
+    //         href: 'https://www.livenation.se/show/1356643/cats/g%c3%b6teborg/2022-11-17/se',
+    //         year: '2022',
+    //         month: 'nov.',
+    //         day: '17',
+    //         weekday: 'tors',
+    //         eventname: 'CATS',
+    //         city: 'Göteborg',
+    //         headliners: 'CATS',
+    //         venue: 'Scandinavium',
+    //     })
     // })
 })

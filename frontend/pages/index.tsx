@@ -1,10 +1,10 @@
 import Head from 'next/head'
+import bgImage from '../public/background.jpg'
 import { nanoid } from 'nanoid'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
 import styles from '../styles/Home.module.css'
-import { Button, Box, Text } from '@chakra-ui/react'
-import { NextPage } from 'next'
+import { Button, Box, Text, Image } from '@chakra-ui/react'
 
 type Event = {
     year: string
@@ -21,11 +21,12 @@ export default function Home() {
     const [eventList, seteventList] = useState<Event[]>([])
     const loadEvents = async () => {
         console.log('sending request')
-        const events = await axios.get('http://localhost:5050')
+        const events = await axios.get('http://localhost:5050/api/events')
         seteventList(events.data)
     }
+
     return (
-        <div className={styles.container}>
+        <>
             <Head>
                 <title>Event information</title>
                 <meta
@@ -37,7 +38,7 @@ export default function Home() {
 
             <main className={styles.main}>
                 <Button onClick={loadEvents} colorScheme={'blue'}>
-                    Load events
+                    Load eventsss
                 </Button>
                 {eventList.map((event) => (
                     <Box key={nanoid()} w={'300px'}>
@@ -46,6 +47,6 @@ export default function Home() {
                     </Box>
                 ))}
             </main>
-        </div>
+        </>
     )
 }
