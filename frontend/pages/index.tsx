@@ -1,10 +1,18 @@
-import Head from 'next/head'
-import bgImage from '../public/background.jpg'
-import { nanoid } from 'nanoid'
-import { useEffect, useState } from 'react'
+import {
+    Box,
+    Button,
+    Heading,
+    HStack,
+    Text,
+    VStack,
+    Input,
+} from '@chakra-ui/react'
 import axios from 'axios'
+import { nanoid } from 'nanoid'
+import Head from 'next/head'
+import { useState } from 'react'
 import styles from '../styles/Home.module.css'
-import { Button, Box, Text, Image } from '@chakra-ui/react'
+import bgImg from '../public/background.jpg'
 
 type Event = {
     year: string
@@ -35,18 +43,51 @@ export default function Home() {
                 />
                 <link rel='icon' href='/favicon.ico' />
             </Head>
+            <Box
+                bgImg={bgImg.src}
+                h={'100vh'}
+                bgPos={'center'}
+                bgSize={'cover'}
+                w={'100vw'}
+            >
+                <Box className={styles.cover}>
+                    <main className={styles.main}>
+                        <VStack alignItems={'flex-start'} spacing={2}>
+                            <Heading color={'white'} fontSize={['6xl', '8xl']}>
+                                Events
+                            </Heading>
+                            <Text color={'white'} fontSize={'2xl'}>
+                                Find and get notified of concerts and live
+                                events near you!
+                            </Text>
+                            <HStack spacing={2}>
+                                <Input
+                                    placeholder={'City'}
+                                    variant={'filled'}
+                                    background={'gray.100'}
+                                />
 
-            <main className={styles.main}>
-                <Button onClick={loadEvents} colorScheme={'blue'}>
-                    Load eventsss
-                </Button>
-                {eventList.map((event) => (
-                    <Box key={nanoid()} w={'300px'}>
-                        <Text fontSize={'xl'}>{event.eventname}</Text>
-                        <Text fontSize={'md'}>{event.headliners}</Text>
-                    </Box>
-                ))}
-            </main>
+                                <Button
+                                    onClick={loadEvents}
+                                    colorScheme={'blue'}
+                                >
+                                    Load events
+                                </Button>
+                            </HStack>
+                            {eventList.map((event) => (
+                                <Box key={nanoid()} w={'300px'}>
+                                    <Text fontSize={'xl'}>
+                                        {event.eventname}
+                                    </Text>
+                                    <Text fontSize={'md'}>
+                                        {event.headliners}
+                                    </Text>
+                                </Box>
+                            ))}
+                        </VStack>
+                    </main>
+                </Box>
+            </Box>
         </>
     )
 }
