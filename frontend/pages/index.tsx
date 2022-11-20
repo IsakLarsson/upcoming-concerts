@@ -1,29 +1,12 @@
-import {
-    Box,
-    Button,
-    Heading,
-    HStack,
-    Text,
-    VStack,
-    Input,
-} from '@chakra-ui/react'
+import { EventCard } from '../components/EventCard'
+import { SearchInputs } from '../components/SearchInputs'
+import { Event } from '../globals/types'
+import { Box, Heading, SimpleGrid, Text, VStack } from '@chakra-ui/react'
 import axios from 'axios'
-import { nanoid } from 'nanoid'
 import Head from 'next/head'
 import { useState } from 'react'
-import styles from '../styles/Home.module.css'
 import bgImg from '../public/background.jpg'
-
-type Event = {
-    year: string
-    month: string
-    day: string
-    weekday: string
-    eventname: string
-    city: string
-    headliners: string
-    venue: string
-}
+import styles from '../styles/Home.module.css'
 
 export default function Home() {
     const [eventList, seteventList] = useState<Event[]>([])
@@ -52,39 +35,26 @@ export default function Home() {
             >
                 <Box className={styles.cover}>
                     <main className={styles.main}>
-                        <VStack alignItems={'flex-start'} spacing={2}>
-                            <Heading color={'white'} fontSize={['6xl', '8xl']}>
-                                Events
-                            </Heading>
-                            <Text color={'white'} fontSize={'2xl'}>
-                                Find and get notified of concerts and live
-                                events near you!
-                            </Text>
-                            <HStack spacing={2}>
-                                <Input
-                                    placeholder={'City'}
-                                    variant={'filled'}
-                                    background={'gray.100'}
-                                />
-
-                                <Button
-                                    onClick={loadEvents}
-                                    colorScheme={'blue'}
+                        <SimpleGrid columns={2} spacing={4}>
+                            <VStack alignItems={'flex-start'} spacing={2}>
+                                <Heading
+                                    color={'white'}
+                                    fontSize={['6xl', '8xl']}
                                 >
-                                    Load events
-                                </Button>
-                            </HStack>
-                            {eventList.map((event) => (
-                                <Box key={nanoid()} w={'300px'}>
-                                    <Text fontSize={'xl'}>
-                                        {event.eventname}
-                                    </Text>
-                                    <Text fontSize={'md'}>
-                                        {event.headliners}
-                                    </Text>
-                                </Box>
-                            ))}
-                        </VStack>
+                                    Events
+                                </Heading>
+                                <Text color={'white'} fontSize={'2xl'}>
+                                    Find and get notified of concerts and live
+                                    events near you!
+                                </Text>
+                                <SearchInputs onClick={loadEvents} />
+                            </VStack>
+                            <VStack>
+                                {eventList.map((event) => (
+                                    <EventCard event={event} />
+                                ))}
+                            </VStack>
+                        </SimpleGrid>
                     </main>
                 </Box>
             </Box>
