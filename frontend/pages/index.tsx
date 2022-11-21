@@ -1,9 +1,22 @@
-import { Box, Flex, Heading, Text, VStack } from '@chakra-ui/react'
+import {
+    Box,
+    Flex,
+    Heading,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalHeader,
+    ModalOverlay,
+    Text,
+    VStack,
+} from '@chakra-ui/react'
 import axios from 'axios'
 import { nanoid } from 'nanoid'
 import Head from 'next/head'
 import { useState } from 'react'
 import { EventCard } from '../components/EventCard'
+import { useDisclosure } from '@chakra-ui/react'
 import { SearchInputs } from '../components/SearchInputs'
 import { Event } from '../globals/types'
 import bgImg from '../public/background.jpg'
@@ -13,13 +26,17 @@ export default function Home() {
     const [eventList, seteventList] = useState<Event[]>([])
     const [selectedCity, setSelectedCity] = useState('')
     const [selectedGenre, setSelectedGenre] = useState('')
-
+    const { isOpen, onClose, onOpen } = useDisclosure()
     const loadEvents = async () => {
         console.log('sending request', selectedCity, selectedGenre)
-        const events = await axios.get(
-            `http://localhost:5050/api/events?city=${selectedCity}&genres=${selectedGenre}`
-        )
-        seteventList(events.data)
+        try {
+            const events = await axios.get(
+                `http://localhost:5050/api/events?city=${selectedCity}&genres=${selectedGenre}`
+            )
+            seteventList(events.data)
+        } catch (error) {
+            onOpen()
+        }
     }
 
     const onChangeCity = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -39,6 +56,26 @@ export default function Home() {
                 />
                 <link rel='icon' href='/favicon.ico' />
             </Head>
+            <Modal
+                motionPreset='slideInBottom'
+                isCentered
+                isOpen={isOpen}
+                onClose={onClose}
+            >
+                <ModalOverlay
+                    bg='blackAlpha.300'
+                    backdropFilter='blur(10px) hue-rotate(320deg)'
+                />
+                <ModalContent>
+                    <ModalHeader>No events found</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        No events could be found with that information, try
+                        another
+                    </ModalBody>
+                </ModalContent>
+                search!
+            </Modal>
             <Box
                 bgImg={bgImg.src}
                 h={'100vh'}
