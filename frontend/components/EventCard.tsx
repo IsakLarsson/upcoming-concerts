@@ -1,7 +1,14 @@
-import React from 'react'
-import { ArrowForwardIcon } from '@chakra-ui/icons'
+import { IoTicket } from 'react-icons/io5'
 
-import { Box, Grid, GridItem, Text, Center, HStack } from '@chakra-ui/react'
+import {
+    Box,
+    Grid,
+    GridItem,
+    Text,
+    Center,
+    HStack,
+    Icon,
+} from '@chakra-ui/react'
 
 import { nanoid } from 'nanoid'
 import { Event } from '../globals/types'
@@ -37,7 +44,7 @@ export const EventCard: React.FC<Event> = (event) => {
                 >
                     <a href={event.href}>
                         <Center h={'100%'}>
-                            <ArrowForwardIcon boxSize={7} color={'white'} />
+                            <Icon as={IoTicket} boxSize={7} color={'white'} />
                         </Center>
                     </a>
                 </GridItem>
