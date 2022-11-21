@@ -1,7 +1,7 @@
-import playwright from 'playwright'
-import { genres, buildGenreString } from '../assets/genreHelpers.js'
-import { getEventInfoFromCard } from '../eventInfoParser.js'
 import asyncHandler from 'express-async-handler'
+import playwright from 'playwright'
+import { buildGenreString } from '../assets/genreHelpers.js'
+import { getEventInfoFromCard } from '../eventInfoParser.js'
 const chromium = playwright.chromium
 
 const parseEventInfo = async (eventCards) => {
@@ -33,7 +33,6 @@ export const getEvents = asyncHandler(async (req, res) => {
         headless: true, // setting this to true will not run the UI
     })
     try {
-        const params = req.query
         let { city, genres } = req.query
         const location = city === undefined ? '' : `location=${city}`
         genres = genres === undefined ? '' : genres

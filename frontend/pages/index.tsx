@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion'
 import {
     Box,
     Flex,
@@ -11,7 +12,6 @@ import {
     Text,
     useDisclosure,
     VStack,
-    Skeleton,
 } from '@chakra-ui/react'
 import axios from 'axios'
 import { nanoid } from 'nanoid'
@@ -24,7 +24,6 @@ import bgImg from '../public/background.jpg'
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
-    const [isLoaded, setIsLoaded] = useState(false)
     const [eventList, seteventList] = useState<Event[]>([])
     const [selectedCity, setSelectedCity] = useState('')
     const [selectedGenre, setSelectedGenre] = useState('')
@@ -32,13 +31,11 @@ export default function Home() {
 
     const loadEvents = async () => {
         console.log('sending request', selectedCity, selectedGenre)
-        setIsLoaded(false)
         try {
             const events = await axios.get(
                 `http://localhost:5050/api/events?city=${selectedCity}&genres=${selectedGenre}`
             )
 
-            setIsLoaded(true)
             seteventList(events.data)
         } catch (error) {
             onOpen()
@@ -122,11 +119,31 @@ export default function Home() {
                             <VStack
                                 spacing={1}
                                 maxH={'90vh'}
+                                flex={1}
                                 overflowY={'scroll'}
+                                padding={'1rem'}
                             >
-                                {eventList.map((event) => (
-                                    <EventCard key={nanoid()} {...event} />
-                                ))}
+                                <AnimatePresence>
+                                    {eventList.map((event, index) => (
+                                        <motion.div
+                                            initial={{ x: 1000 }}
+                                            animate={{ x: 0 }}
+                                            transition={{
+                                                delay: index * 0.03,
+                                                stiffness: 200,
+                                                type: 'spring',
+                                                damping: 20,
+                                            }}
+                                        >
+                                            <motion.div whileHover={{ x: 10 }}>
+                                                <EventCard
+                                                    key={nanoid()}
+                                                    {...event}
+                                                />
+                                            </motion.div>
+                                        </motion.div>
+                                    ))}
+                                </AnimatePresence>
                             </VStack>
                         </Flex>
                     </main>
