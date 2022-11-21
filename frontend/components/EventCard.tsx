@@ -12,7 +12,7 @@ export const EventCard: React.FC<Event> = (event) => {
             borderRadius={'5px'}
             key={nanoid()}
             bg={'rgba(61,61,61,0.8)'}
-            w={'400px'}
+            w={'600px'}
             maxWidth={'100%'}
         >
             <Grid templateColumns={'repeat(6, 1fr)'}>

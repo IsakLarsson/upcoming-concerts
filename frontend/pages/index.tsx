@@ -1,28 +1,32 @@
+import { Box, Flex, Heading, Text, VStack } from '@chakra-ui/react'
+import axios from 'axios'
+import { nanoid } from 'nanoid'
+import Head from 'next/head'
+import { useState } from 'react'
 import { EventCard } from '../components/EventCard'
 import { SearchInputs } from '../components/SearchInputs'
 import { Event } from '../globals/types'
-import {
-    Box,
-    Heading,
-    SimpleGrid,
-    Flex,
-    Spacer,
-    Text,
-    VStack,
-} from '@chakra-ui/react'
-import axios from 'axios'
-import Head from 'next/head'
-import { useState } from 'react'
 import bgImg from '../public/background.jpg'
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
     const [eventList, seteventList] = useState<Event[]>([])
+    const [selectedCity, setSelectedCity] = useState('')
+    const [selectedGenre, setSelectedGenre] = useState('')
 
     const loadEvents = async () => {
-        console.log('sending request')
-        const events = await axios.get('http://localhost:5050/api/events')
+        console.log('sending request', selectedCity, selectedGenre)
+        const events = await axios.get(
+            `http://localhost:5050/api/events?city=${selectedCity}&genres=${selectedGenre}`
+        )
         seteventList(events.data)
+    }
+
+    const onChangeCity = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedCity(event.target.value)
+    }
+    const onChangeGenre = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedGenre(event.target.value)
     }
 
     return (
@@ -64,7 +68,13 @@ export default function Home() {
                                     Find and get notified of concerts and live
                                     events near you!
                                 </Text>
-                                <SearchInputs onClick={loadEvents} />
+                                <SearchInputs
+                                    selectedCity={selectedCity}
+                                    selectedGenre={selectedGenre}
+                                    onChangeCity={onChangeCity}
+                                    onChangeGenre={onChangeGenre}
+                                    onClick={loadEvents}
+                                />
                             </VStack>
                             <VStack
                                 spacing={1}
@@ -72,7 +82,7 @@ export default function Home() {
                                 overflowY={'scroll'}
                             >
                                 {eventList.map((event) => (
-                                    <EventCard {...event} />
+                                    <EventCard key={nanoid()} {...event} />
                                 ))}
                             </VStack>
                         </Flex>

@@ -1,23 +1,49 @@
+import { ChangeEventHandler, useEffect, useState } from 'react'
 import { citiesList, genreList } from '../globals/searchTerms'
 import { SearchIcon } from '@chakra-ui/icons'
 import { Select, Button, HStack } from '@chakra-ui/react'
 import { MouseEventHandler } from 'react'
+import { nanoid } from 'nanoid'
 
 interface Props {
+    selectedCity: string
+    selectedGenre: string
     onClick: MouseEventHandler
+    onChangeGenre: ChangeEventHandler
+    onChangeCity: ChangeEventHandler
 }
-export const SearchInputs: React.FC<Props> = ({ onClick }) => {
+export const SearchInputs: React.FC<Props> = ({
+    selectedCity,
+    selectedGenre,
+    onChangeCity,
+    onChangeGenre,
+    onClick,
+}) => {
     return (
         <>
             <HStack spacing={2}>
-                <Select placeholder='All cities' color={'white'}>
+                <Select
+                    placeholder='All cities'
+                    value={selectedCity}
+                    onChange={onChangeCity}
+                    color={'white'}
+                >
                     {citiesList.map((city: string) => (
-                        <option>{city}</option>
+                        <option key={nanoid()} value={city}>
+                            {city}
+                        </option>
                     ))}
                 </Select>
-                <Select placeholder='All genres' color={'white'}>
+                <Select
+                    placeholder='All genres'
+                    onChange={onChangeGenre}
+                    value={selectedGenre}
+                    color={'white'}
+                >
                     {genreList.map((genre: string) => (
-                        <option>{genre}</option>
+                        <option key={nanoid()} value={genre}>
+                            {genre}
+                        </option>
                     ))}
                 </Select>
 
