@@ -1,7 +1,15 @@
 import { EventCard } from '../components/EventCard'
 import { SearchInputs } from '../components/SearchInputs'
 import { Event } from '../globals/types'
-import { Box, Heading, SimpleGrid, Text, VStack } from '@chakra-ui/react'
+import {
+    Box,
+    Heading,
+    SimpleGrid,
+    Flex,
+    Spacer,
+    Text,
+    VStack,
+} from '@chakra-ui/react'
 import axios from 'axios'
 import Head from 'next/head'
 import { useState } from 'react'
@@ -10,6 +18,7 @@ import styles from '../styles/Home.module.css'
 
 export default function Home() {
     const [eventList, seteventList] = useState<Event[]>([])
+
     const loadEvents = async () => {
         console.log('sending request')
         const events = await axios.get('http://localhost:5050/api/events')
@@ -35,8 +44,16 @@ export default function Home() {
             >
                 <Box className={styles.cover}>
                     <main className={styles.main}>
-                        <SimpleGrid columns={2} spacing={4}>
-                            <VStack alignItems={'flex-start'} spacing={2}>
+                        <Flex
+                            direction={'row'}
+                            justifyContent={'space-evenly'}
+                            width={'100%'}
+                        >
+                            <VStack
+                                alignItems={'flex-start'}
+                                maxH={'100%'}
+                                spacing={2}
+                            >
                                 <Heading
                                     color={'white'}
                                     fontSize={['6xl', '8xl']}
@@ -49,12 +66,16 @@ export default function Home() {
                                 </Text>
                                 <SearchInputs onClick={loadEvents} />
                             </VStack>
-                            <VStack>
+                            <VStack
+                                spacing={1}
+                                maxH={'90vh'}
+                                overflowY={'scroll'}
+                            >
                                 {eventList.map((event) => (
-                                    <EventCard event={event} />
+                                    <EventCard {...event} />
                                 ))}
                             </VStack>
-                        </SimpleGrid>
+                        </Flex>
                     </main>
                 </Box>
             </Box>
