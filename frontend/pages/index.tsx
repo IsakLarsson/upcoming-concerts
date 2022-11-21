@@ -77,7 +77,7 @@ export default function Home() {
                     <ModalCloseButton />
                     <ModalBody>
                         No events could be found with that information, try
-                        another
+                        another search!
                     </ModalBody>
                 </ModalContent>
                 search!
@@ -125,9 +125,7 @@ export default function Home() {
                                 overflowY={'scroll'}
                             >
                                 {eventList.map((event) => (
-                                    <Skeleton isLoaded={isLoaded}>
-                                        <EventCard key={nanoid()} {...event} />
-                                    </Skeleton>
+                                    <EventCard key={nanoid()} {...event} />
                                 ))}
                             </VStack>
                         </Flex>
