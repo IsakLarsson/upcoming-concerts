@@ -37,7 +37,7 @@ export const EventCard: React.FC<Event> = (event) => {
                 >
                     <a href={event.href}>
                         <Center h={'100%'}>
-                            <ArrowForwardIcon color={'white'} />
+                            <ArrowForwardIcon boxSize={7} color={'white'} />
                         </Center>
                     </a>
                 </GridItem>

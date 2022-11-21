@@ -9,30 +9,36 @@ import {
     ModalHeader,
     ModalOverlay,
     Text,
+    useDisclosure,
     VStack,
+    Skeleton,
 } from '@chakra-ui/react'
 import axios from 'axios'
 import { nanoid } from 'nanoid'
 import Head from 'next/head'
 import { useState } from 'react'
 import { EventCard } from '../components/EventCard'
-import { useDisclosure } from '@chakra-ui/react'
 import { SearchInputs } from '../components/SearchInputs'
 import { Event } from '../globals/types'
 import bgImg from '../public/background.jpg'
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
+    const [isLoaded, setIsLoaded] = useState(false)
     const [eventList, seteventList] = useState<Event[]>([])
     const [selectedCity, setSelectedCity] = useState('')
     const [selectedGenre, setSelectedGenre] = useState('')
     const { isOpen, onClose, onOpen } = useDisclosure()
+
     const loadEvents = async () => {
         console.log('sending request', selectedCity, selectedGenre)
+        setIsLoaded(false)
         try {
             const events = await axios.get(
                 `http://localhost:5050/api/events?city=${selectedCity}&genres=${selectedGenre}`
             )
+
+            setIsLoaded(true)
             seteventList(events.data)
         } catch (error) {
             onOpen()
@@ -119,7 +125,9 @@ export default function Home() {
                                 overflowY={'scroll'}
                             >
                                 {eventList.map((event) => (
-                                    <EventCard key={nanoid()} {...event} />
+                                    <Skeleton isLoaded={isLoaded}>
+                                        <EventCard key={nanoid()} {...event} />
+                                    </Skeleton>
                                 ))}
                             </VStack>
                         </Flex>
