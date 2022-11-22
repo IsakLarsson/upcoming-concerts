@@ -126,6 +126,7 @@ export default function Home() {
                                 <AnimatePresence>
                                     {eventList.map((event, index) => (
                                         <motion.div
+                                            key={nanoid()}
                                             initial={{ x: 1000 }}
                                             animate={{ x: 0 }}
                                             transition={{
@@ -136,10 +137,7 @@ export default function Home() {
                                             }}
                                         >
                                             <motion.div whileHover={{ x: 10 }}>
-                                                <EventCard
-                                                    key={nanoid()}
-                                                    {...event}
-                                                />
+                                                <EventCard {...event} />
                                             </motion.div>
                                         </motion.div>
                                     ))}
